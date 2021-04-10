@@ -6,6 +6,10 @@ Sys.setenv(TZ = 'US/Eastern')
 
 shinyServer(function(input, output, session) {
   
+  output$copyright <- renderText({
+    print(HTML("<p style='text-align: center;'>A Tale of Three Distributions.<br>&copy; 2021 Yuanting Lu</p>"))
+  })
+  
   ##################################
   # Create graph
   ################################## 
@@ -49,7 +53,7 @@ shinyServer(function(input, output, session) {
                lty = c(1, 1, 3), lwd = 3,
                legend = c(sprintf('Binomial(%d, %g)', n, p), 
                           sprintf('Poisson(%g)', lambda),
-                          sprintf('N(%g, %g', lambda, sqrt(lambda * (1 - p)))
+                          sprintf('N(%g, %g^2)', lambda, sqrt(lambda * (1 - p)))
                           ))
       } else {
         legend('topright', inset = c(0, -0.3), 
