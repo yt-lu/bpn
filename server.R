@@ -15,13 +15,29 @@ shinyServer(function(input, output, session) {
   ################################## 
   output$graph <- renderPlot({
     
-    n <- input$n
+    req(input$n)
+    req(input$lambda)
+    
+    if (input$n > 2000) {
+      shinyalert('Oops. My capacity is n = 2000 :)', 
+                 type = 'info')
+      updateNumericInput(session, 'n', "Binomial parameter n", 10, min = 1, max = 2000, step = 1)
+    }
+    
+    n <- ifelse(input$n > 2000, 2000, input$n)
     lambda <- input$lambda
     p <- lambda / n
     
+    par(family = "mono")
     if (p > 1) {
       plot.new()
-      title(expression(paste("p = ", lambda, "/n cannot be larger than 1.")))
+      title(expression(paste("Error: p = ", lambda, "/n cannot be larger than 1.")))
+    } else if (lambda <= 0) {
+      plot.new()
+      title(expression(paste("Error: ", lambda, " has to be positive.")))
+    } else if (n <= 0 | !is.integer(n)) {
+      plot.new()
+      title(expression(paste("Error: ", n, " has to be a positive integer.")))
     } else {
       m <- max(2 * lambda, lambda + 6)
       x <- 0 : m

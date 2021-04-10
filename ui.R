@@ -9,21 +9,24 @@ shinyUI(fluidPage(
     tags$style(HTML("
                     * {
                     font-family: Palatino,garamond,serif;
-                    font-weight: 500;
+                    font-weight: 400;
                     line-height: 1.2;
                     #color: #000000;
                     }
+                    
                     hr {border-top: 0.5px solid #ffffff;}
                     br {font-size: 5px;}
                     "))
   ), 
   # Application title
-  titlePanel("Poisson, Binomial, and Normal Distributions"),
-  
+  titlePanel(h3("The Binomial, Poisson, and Normal Distributions", align = 'left')),
+
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
     sidebarPanel(width = 3,
+      useShinyalert(),
       numericInput("n", "Binomial parameter n", 10, min = 1, max = 2000, step = 1),
+      useShinyalert(),
       numericInput("lambda", HTML("Poisson Parameter &lambda;"), 1, min = 0.001, max = 100),
       checkboxInput("normal", "Display Normal Curve", FALSE)
     ),
