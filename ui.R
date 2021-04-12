@@ -18,17 +18,21 @@ shinyUI(fluidPage(
                     br {font-size: 5px;}
                     "))
   ), 
+  
+  withMathJax(),
+  
   # Application title
-  titlePanel(h3("The Binomial, Poisson, and Normal Distributions", align = 'left')),
+  titlePanel("Approximate Binomial by Poisson and Normal"),
 
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
     sidebarPanel(width = 3,
       useShinyalert(),
-      numericInput("n", "Binomial parameter n", 10, min = 1, max = 2000, step = 1),
+      numericInput("n", "n", 10, step = 10),
       useShinyalert(),
-      numericInput("lambda", HTML("Poisson Parameter &lambda;"), 1, min = 0.001, max = 100),
-      checkboxInput("normal", "Display Normal Curve", FALSE)
+      numericInput("lambda", HTML("&lambda;"), 1),
+      checkboxInput("pois", "Show Poisson", TRUE),
+      checkboxInput("norm", "Show normal", FALSE)
     ),
   
     

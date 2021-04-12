@@ -7,7 +7,7 @@ Sys.setenv(TZ = 'US/Eastern')
 shinyServer(function(input, output, session) {
   
   output$copyright <- renderText({
-    print(HTML("<p style='text-align: center;'>A Tale of Three Distributions.<br>&copy; 2021 Yuanting Lu</p>"))
+    print(HTML("<p style='text-align: center;'>A tale of three distributions.<br>&copy; 2021 Yuanting Lu</p>"))
   })
   
   ##################################
@@ -43,7 +43,7 @@ shinyServer(function(input, output, session) {
       x <- 0 : m
       xx <- seq(0, m, 0.05)
       ymax <- max(dbinom(x, n, p), dpois(x, lambda))
-      par(mar = c(4,6,6,2), mgp = c(4, 1, 0), xpd = T)
+      par(oma = c(2, 0, 2, 2), mar = c(2,2,6,2), mgp = c(4, 1, 0), xpd = T)
       
       # Binomial distribution
       plot(x, dbinom(x, n, p), type = 'h', lwd = 3,
@@ -52,10 +52,12 @@ shinyServer(function(input, output, session) {
            ylab = "Probability")
       
       # Poisson distribution
-      lines(x + 0.1, dpois(x, lambda), type = 'h', lwd = 3, col = 'red')
+      if (input$pois) {
+        lines(x + 0.1, dpois(x, lambda), type = 'h', lwd = 3, col = 'red')
+      }
       
       # Normal distribution
-      if (input$normal) {
+      if (input$norm) {
         lines(xx, dnorm(xx, lambda, sqrt(lambda * (1 - p))), 
               col = 'grey50', 
               type = 'l', 
@@ -63,19 +65,38 @@ shinyServer(function(input, output, session) {
               lty = 3)
       }
       
-      if (input$normal) {
-        legend('topright', inset = c(0, -0.3), 
+      if (input$pois & input$norm) {
+        legend('topright', inset = c(0, -0.2), 
                col = c('black', 'red', 'grey50'), 
                lty = c(1, 1, 3), lwd = 3,
                legend = c(sprintf('Binomial(%d, %g)', n, p), 
                           sprintf('Poisson(%g)', lambda),
                           sprintf('N(%g, %g^2)', lambda, sqrt(lambda * (1 - p)))
                           ))
-      } else {
-        legend('topright', inset = c(0, -0.3), 
+        
+      } else if (input$pois & !input$norm){
+        legend('topright', inset = c(0, -0.2), 
                col = c('black', 'red'), 
                lty = 1, lwd = 3,
-               legend = c(sprintf('Binomial(%d, %g)', n, p), sprintf('Poisson(%g)', lambda)))
+               legend = c(sprintf('Binomial(%d, %g)', n, p), 
+                          sprintf('Poisson(%g)', lambda)))
+        title(bquote("Binomial(" ~ n ~ "," ~ lambda/n  ~ ") vs. Poisson(" ~ lambda ~ ")"), 
+              line = 5)
+      } else if (!input$pois & input$norm) {
+        legend('topright', inset = c(0, -0.2), 
+               col = c('black', 'grey50'), 
+               lty = c(1, 3), lwd = 3,
+               legend = c(sprintf('Binomial(%d, %g)', n, p),
+                          sprintf('N(%g, %g^2)', lambda, sqrt(lambda * (1 - p)))
+               ))
+        title(bquote("Binomial(" ~ n ~ "," ~ lambda/n  ~ ") vs. N(" ~ lambda ~ "," ~ lambda(1-lambda/n) ~")"), 
+              line = 5)
+      } else{
+        legend('topright', inset = c(0, -0.2), 
+               col = 'black', 
+               lty = 1, lwd = 3,
+               legend = sprintf('Binomial(%d, %g)', n, p))
+        title(bquote("Binomial(" ~ n ~ "," ~ lambda/n  ~ ")"), line = 5)
       }
       
       axis(1)
